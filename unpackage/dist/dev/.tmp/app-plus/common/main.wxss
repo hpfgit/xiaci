@@ -1,0 +1,66 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*每个页面公共css */
+page {
+	background: #f5f4f9;
+	font-size: 28rpx;
+}
+.fl {
+	float: left;
+}
+.fr {
+	float: right;
+}
+.clearfix:after {
+	content: " ";
+	display: block;
+	clear: both;
+	height: 0;
+	line-height: 0;
+	visibility: hidden;
+}
+.no_select {
+	width: 34rpx;
+	height: 34rpx;
+	border: solid 2px #cacaca;
+	background: #fff;
+	border-radius: 34rpx;
+	margin-right: 22rpx;
+}
+.c_line {
+	width: 2rpx;
+	background: #f4f5f9;
+}
+.y_line {
+	height: 0;
+	border-top: 2rpx solid #f5f4f9;
+}
+.p24 {
+	padding: 0 24rpx;
+}
+.p20 {
+	padding: 0 20rpx;
+}
+.cblue {
+	color: #3748f9;
+}
+

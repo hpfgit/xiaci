@@ -1,0 +1,50 @@
+
+page {
+	background: #fff;
+	height: 100vh;
+}
+.login {
+	padding: 0 40rpx;
+}
+.title {
+	font-family: PingFangSC-Medium;
+	font-size: 40rpx;
+	line-height: 32rpx;
+	font-weight: bold;
+	color: #454454;
+	padding-top: 80rpx;
+}
+.user,
+.pass {
+	border-bottom: 2rpx solid #f4f5f9;
+	height: 110rpx;
+	line-height: 110rpx;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-webkit-flex-direction: column;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
+	-webkit-box-pack: end;
+	-webkit-justify-content: flex-end;
+	    -ms-flex-pack: end;
+	        justify-content: flex-end;
+	padding-bottom: 25rpx;
+}
+.user input,
+.pass input {
+	font-weight: 28rpx;
+	padding-left: 8rpx;
+}
+.is_button {
+	margin-top: 63rpx;
+	padding: 0 40rpx;
+}
+.is_button button {
+	background-color: #3a50f5;
+	color: #fff;
+}
+

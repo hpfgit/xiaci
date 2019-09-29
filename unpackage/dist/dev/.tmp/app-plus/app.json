@@ -1,0 +1,30 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/List/list",
+    "pages/checkOut/checkOut",
+    "pages/sweep/sweep",
+    "pages/check/check",
+    "pages/index/index",
+    "pages/repair/repair",
+    "pages/noRepair/noRepair",
+    "pages/setScheme/setScheme",
+    "pages/repairSuc/repairSuc",
+    "pages/myHandler/myHandler"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "nvueCompiler": "uni-app",
+  "renderer": "auto",
+  "splashscreen": {
+    "alwaysShowBeforeRender": true,
+    "autoclose": false
+  },
+  "appname": "瑕疵仓",
+  "compilerVersion": "2.3.2",
+  "usingComponents": {}
+}

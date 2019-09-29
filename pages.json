@@ -1,0 +1,78 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/List/list",
+			"style": {
+				"navigationBarTitleText": "寄售端",
+				"enablePullDownRefresh": true
+				
+			}
+		},
+		{
+			"path": "pages/checkOut/checkOut",
+			"style": {
+				"navigationBarTitleText": "检查/返工"
+			}
+		},
+		{
+			"path": "pages/sweep/sweep",
+			"style": {
+				"navigationBarTitleText": "操作端"
+			}
+		},
+		{
+			"path": "pages/check/check",
+			"style": {
+				"navigationBarTitleText": "选择寄售商"
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "主页"
+			}
+		},
+		{
+			"path": "pages/repair/repair",
+			"style": {
+				"navigationBarTitleText": "修复"
+			}
+		},
+		{
+			"path": "pages/noRepair/noRepair",
+			"style": {
+				"navigationBarTitleText": "不可修复"
+			}
+		},
+		{
+			"path": "pages/setScheme/setScheme",
+			"style": {
+				"navigationBarTitleText": "设置方案"
+			}
+		},
+		{
+			"path": "pages/repairSuc/repairSuc",
+			"style": {
+				"navigationBarTitleText": "修复完成"
+			}
+		},
+		{
+			"path": "pages/myHandler/myHandler",
+			"style": {
+				"navigationBarTitleText": "我的处理"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}
