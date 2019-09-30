@@ -198,14 +198,27 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 var _vuex = __webpack_require__(/*! vuex */ 14);
 
 
 
 
 
+
 var _qiniuUploader = _interopRequireDefault(__webpack_require__(/*! ../../utils/qiniuUploader.js */ 41));
-var _request = _interopRequireDefault(__webpack_require__(/*! ../../utils/request.js */ 12));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var recorderManager = uni.getRecorderManager();var innerAudioContext = uni.createInnerAudioContext();var time1 = '';
+var _request = _interopRequireDefault(__webpack_require__(/*! ../../utils/request.js */ 12));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance");}function _iterableToArray(iter) {if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) {for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {arr2[i] = arr[i];}return arr2;}}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var recorderManager = uni.getRecorderManager();var innerAudioContext = uni.createInnerAudioContext();var time1 = '';
 var app = getApp();var _default =
 
 {
@@ -213,11 +226,14 @@ var app = getApp();var _default =
     return {
       id: '',
       imgArr: [],
+      imgArrRes: [],
       shoeboxImgArr: [],
       repairImgArr: [],
       shoeboxImgResArr: [],
       repairImgResArr: [],
       resultImgArr: [],
+      unrepair_image: [],
+      unrepair_imageRes: [],
       qiniuToken: '',
       is_value: '',
       voice: '',
@@ -239,9 +255,10 @@ var app = getApp();var _default =
 
       {
         value: 'is_xiu',
-        name: '修复' }] };
+        name: '修复' }],
 
 
+      resData: [] };
 
   },
   onLoad: function onLoad() {var _this = this;
@@ -249,11 +266,29 @@ var app = getApp();var _default =
       console.log(res);
       _this.qiniuToken = res.data;
     });
+    (0, _request.default)('/api/auth/getOrder', 'POST', {
+      bar_id: this.shapecode }).
+    then(function (res) {
+      console.log(res);
+      if (res.data.length) {
+        _this.resData = res.data;
+        _this.shoeboxImgArr = res.data[0].shoes_image === null ? [] : JSON.parse(res.data[0].shoes_image);
+        _this.shoeboxImgResArr = res.data[0].shoes_image === null ? [] : JSON.parse(res.data[0].shoes_image);
+        _this.imgArr = res.data[0].original_image === null ? [] : JSON.parse(res.data[0].original_image);
+        _this.imgArrRes = res.data[0].original_image === null ? [] : JSON.parse(res.data[0].original_image);
+        _this.unrepair_image = res.data[0].end_image === null ? [] : JSON.parse(res.data[0].end_image);
+        _this.unrepair_imageRes = res.data[0].end_image === null ? [] : JSON.parse(res.data[0].end_image);
+        _this.sound = res.data[0].sound;
+        _this.upShapeCode(res.data[0].bar_id);
+        _this.upJSName(res.data[0].username);
+      }
+    });
   },
   computed: _objectSpread({},
   (0, _vuex.mapState)(['jsName', 'shapecode', 'jsId'])),
 
-  methods: {
+  methods: _objectSpread({},
+  (0, _vuex.mapMutations)(['upJSName', 'upShapeCode']), {
     checkboxChange: function checkboxChange(e) {
       var items = this.items,
       values = e.detail.value;
@@ -299,12 +334,42 @@ var app = getApp();var _default =
         } });
 
     },
+    // 添加修复后图片
+    add_unrepair_img: function add_unrepair_img() {
+      var that = this;
+      var imgArr = that.unrepair_image;
+      uni.chooseImage({
+        sizeType: ['original', 'compressed'],
+        sourceType: ['album', 'camera'],
+        success: function success(res) {
+          that.unrepair_image = imgArr.concat(res.tempFilePaths);
+        } });
+
+    },
     // 删除图片
     deteleImg: function deteleImg(e) {
       var index = e.currentTarget.dataset.index;
-      var arr = this.imgArr;
-      arr.splice(index, 1);
-      this.imgArr = arr;
+      this.shoeboxImgArr.splice(index, 1);
+      if (index <= this.shoeboxImgResArr.length - 1) {
+        this.shoeboxImgResArr.splice(index, 1);
+      }
+    },
+    // 删除图片
+    deteleImg2: function deteleImg2(e) {
+      var index = e.currentTarget.dataset.index;
+      this.imgArr.splice(index, 1);
+      if (index <= this.imgArrRes.length - 1) {
+        this.imgArrRes.splice(index, 1);
+      }
+    },
+    // 删除图片
+    deteleImg3: function deteleImg3(e) {
+      var index = e.currentTarget.dataset.index;
+      this.unrepair_image.splice(index, 1);
+      if (index <= this.unrepair_imageRes.length - 1) {
+        this.unrepair_imageRes.splice(index, 1);
+      }
+      console.log(this.unrepair_imageRes);
     },
     // 添加备注
     add_remarks: function add_remarks(e) {
@@ -401,13 +466,26 @@ var app = getApp();var _default =
     upImgs: function upImgs(imgArr, qiuniuToken) {
       var that = this;
       var resultImgArr = [];
+
+      var arr = [];
+
+      imgArr.forEach(function (item) {
+        if (!/static\.tosneaker\.com/ig.test(item) || !/uploads/ig.test(item)) {
+          arr.push(item);
+        }
+      });
+      console.log(imgArr);
+
+      if (arr.length === 0) {
+        return Promise.resolve(imgArr);
+      }
+
       return new Promise(function (resolve, reject) {
-        imgArr.forEach(function (item) {
+        arr.forEach(function (item) {
           var imgName = item.substr(30, 50);
           _qiniuUploader.default.upload(item, function (res) {
             resultImgArr.push(res.imageURL);
-            that.resultImgArr;
-            if (resultImgArr.length == imgArr.length) {
+            if (resultImgArr.length == arr.length) {
               resolve(resultImgArr);
             }
           }, function (error) {
@@ -479,39 +557,52 @@ var app = getApp();var _default =
       if (that.voice != "") {
         that.upRecord(that.voice, that.qiniuToken).then(function (res) {
           sound = res.imageURL;
-          that.upImgs(that.imgArr, that.qiniuToken).then(function (original_image) {
-            console.log(original_image);
-            that.upImgs(_this4.shoeboxImgArr, that.qiniuToken).then(function (shoes_image) {
+          that.upImgs(that.imgArr, that.qiniuToken).then(function (original_image) {var _original_image;
+            original_image = _toConsumableArray(new Set((_original_image = original_image).concat.apply(_original_image, _toConsumableArray(_this4.imgArrRes))));
+            console.log(that.shoeboxImgArr);
+            that.upImgs(that.shoeboxImgArr, that.qiniuToken).then(function (shoes_image) {var _shoes_image;
               console.log(shoes_image);
-              (0, _request.default)("/api/auth/order", "POST", {
-                consignor_id: that.jsId,
-                bar_id: that.shapecode,
-                original_image: original_image,
-                shoes_image: shoes_image,
-                remarks: that.remarks,
-                sound: sound,
-                sound_length: _this4.time,
-                is_xi: type_s['is_xi'],
-                is_xiu: type_s['is_xiu'] }).
-              then(function (res) {
+              shoes_image = _toConsumableArray(new Set((_shoes_image = shoes_image).concat.apply(_shoes_image, _toConsumableArray(_this4.shoeboxImgResArr))));
+              that.upImgs(_this4.unrepair_image, that.qiniuToken).then(function (end_image) {var _end_image;
+                console.log(end_image);
+                end_image = _toConsumableArray(new Set((_end_image = end_image).concat.apply(_end_image, _toConsumableArray(_this4.unrepair_imageRes))));
+                (0, _request.default)("/api/auth/order", "POST", {
+                  consignor_id: that.jsId,
+                  bar_id: that.shapecode,
+                  original_image: original_image,
+                  shoes_image: shoes_image,
+                  remarks: that.remarks,
+                  end_image: end_image,
+                  sound: sound,
+                  sound_length: _this4.time,
+                  is_xi: type_s['is_xi'],
+                  is_xiu: type_s['is_xiu'] }).
+                then(function (res) {
+                  uni.hideLoading();
+                  uni.showToast({
+                    title: res.data.message,
+                    icon: "none",
+                    duration: 1000,
+                    complete: function complete() {
+                      if (res.data.status == 200) {
+                        uni.showToast({
+                          title: '添加完成',
+                          icon: 'none' });
+
+                        setTimeout(function () {
+                          uni.navigateTo({
+                            url: "../sweep/sweep" });
+
+                        }, 1000);
+                      }
+                    } });
+
+                });
+              }).catch(function (error) {
                 uni.hideLoading();
                 uni.showToast({
-                  title: res.data.message,
-                  icon: "none",
-                  duration: 1000,
-                  complete: function complete() {
-                    if (res.data.status == 200) {
-                      uni.showToast({
-                        title: '添加完成',
-                        icon: 'none' });
-
-                      setTimeout(function () {
-                        uni.navigateTo({
-                          url: "../sweep/sweep" });
-
-                      }, 1000);
-                    }
-                  } });
+                  title: '图片上传失败',
+                  icon: "none" });
 
               });
             }).catch(function (error) {
@@ -536,36 +627,51 @@ var app = getApp();var _default =
 
         });
       } else {
-        that.upImgs(that.imgArr, that.qiniuToken).then(function (original_image) {
-          console.log(original_image);
-          that.upImgs(_this4.shoeboxImgArr, that.qiniuToken).then(function (shoes_image) {
-            console.log(shoes_image);
-            (0, _request.default)("/api/auth/order", "POST", {
-              consignor_id: that.jsId,
-              bar_id: that.shapecode,
-              original_image: original_image,
-              shoes_image: shoes_image,
-              remarks: that.remarks,
-              sound: sound,
-              is_xi: type_s['is_xi'],
-              is_xiu: type_s['is_xiu'] }).
-            then(function (res) {
+        that.upImgs(that.imgArr, that.qiniuToken).then(function (original_image) {var _original_image2;
+          original_image = _toConsumableArray(new Set((_original_image2 = original_image).concat.apply(_original_image2, _toConsumableArray(_this4.imgArrRes))));
+          that.upImgs(_this4.shoeboxImgArr, that.qiniuToken).then(function (shoes_image) {var _shoes_image2;
+            shoes_image = _toConsumableArray(new Set((_shoes_image2 = shoes_image).concat.apply(_shoes_image2, _toConsumableArray(_this4.shoeboxImgResArr))));
+            that.upImgs(_this4.unrepair_image, that.qiniuToken).then(function (end_image) {var _end_image2;
+              end_image = _toConsumableArray(new Set((_end_image2 = end_image).concat.apply(_end_image2, _toConsumableArray(_this4.unrepair_imageRes))));
+              var url = "/api/auth/order";
+              if (_this4.resData.length) {
+                url = '/api/auth/updateOrder';
+              }
+              console.log(shoes_image);
+              (0, _request.default)(url, "POST", {
+                consignor_id: that.jsId,
+                bar_id: that.shapecode,
+                original_image: original_image,
+                shoes_image: shoes_image,
+                remarks: that.remarks,
+                end_image: end_image,
+                sound: sound,
+                is_xi: type_s['is_xi'],
+                is_xiu: type_s['is_xiu'] }).
+              then(function (res) {
+                uni.hideLoading();
+                uni.showToast({
+                  title: res.data.message,
+                  icon: "none",
+                  duration: 1000,
+                  complete: function complete() {
+                    uni.showToast({
+                      title: '添加完成',
+                      icon: 'none' });
+
+                    setTimeout(function () {
+                      uni.navigateTo({
+                        url: "../sweep/sweep" });
+
+                    }, 1000);
+                  } });
+
+              });
+            }).catch(function (error) {
               uni.hideLoading();
               uni.showToast({
-                title: res.data.message,
-                icon: "none",
-                duration: 1000,
-                complete: function complete() {
-                  uni.showToast({
-                    title: '添加完成',
-                    icon: 'none' });
-
-                  setTimeout(function () {
-                    uni.navigateTo({
-                      url: "../sweep/sweep" });
-
-                  }, 1000);
-                } });
+                title: '图片上传失败',
+                icon: "none" });
 
             });
           }).catch(function (error) {
@@ -727,7 +833,7 @@ var app = getApp();var _default =
 
         });
       }
-    } } };exports.default = _default;
+    } }) };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),

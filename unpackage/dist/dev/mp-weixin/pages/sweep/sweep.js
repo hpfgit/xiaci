@@ -206,23 +206,23 @@ var _request = _interopRequireDefault(__webpack_require__(/*! ../../utils/reques
       }
       return true;
     },
-    repair: function repair() {var _this = this;
+    repair: function repair() {
       if (this.isEmpty()) {
-        (0, _request.default)('/api/auth/checkOrder', 'POST', {
-          bar_id: this.shapecode }).
-        then(function (res) {
-          _this.isRepair = true;
-          if (res.data.status === 201) {
-            uni.showToast({
-              title: '该商品正在修复中...',
-              icon: 'none' });
+        // request('/api/auth/checkOrder', 'POST', {
+        // 	bar_id: this.shapecode,
+        // }).then(res => {
+        // 	this.isRepair = true;
+        // 	if (res.data.status === 201) {
+        // 		uni.showToast({
+        // 			title: '该商品正在修复中...',
+        // 			icon: 'none'
+        // 		});
+        // 	} else {
+        uni.navigateTo({
+          url: '../check/check' });
 
-          } else {
-            uni.navigateTo({
-              url: '../check/check' });
-
-          }
-        });
+        // 	}
+        // });
       }
     },
     noRepair: function noRepair() {

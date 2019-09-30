@@ -92,14 +92,16 @@
 				this.qiniuToken = res.data;
 			});
 			request('/api/auth/getOrder', 'POST', {
-				bar_id: uni.getStorageSync('shapecode') || this.shapecode
+				bar_id: this.shapecode
 			}).then(res => {
-				this.shoeboxImgArr = res.data[0].end_image === null ? [] : JSON.parse(res.data[0].end_image);
-				this.shoeboxImgResArr = res.data[0].end_image === null ? [] : JSON.parse(res.data[0].end_image);
-				this.sound = res.data[0].sound;
-				this.upShapeCode(res.data[0].bar_id);
-				this.upJSName(res.data[0].username);
-				console.log(res);
+				if (res.data.length) {					
+					this.shoeboxImgArr = res.data[0].end_image === null ? [] : JSON.parse(res.data[0].end_image);
+					this.shoeboxImgResArr = res.data[0].end_image === null ? [] : JSON.parse(res.data[0].end_image);
+					this.sound = res.data[0].sound;
+					this.upShapeCode(res.data[0].bar_id);
+					this.upJSName(res.data[0].username);
+					console.log(res);
+				}
 			})
 		},
 		computed: {

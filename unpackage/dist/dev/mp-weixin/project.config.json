@@ -9,7 +9,7 @@
 	"compileType": "miniprogram",
 	"libVersion": "2.7.0",
 	"appid": "wx017bd20f5be7e80a",
-	"projectname": "%E7%91%95%E7%96%B5%E4%BB%93",
+	"projectname": "瑕疵仓",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"condition": {

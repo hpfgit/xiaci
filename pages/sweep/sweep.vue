@@ -12,21 +12,21 @@
 			<view class="btn" @tap="repair" :data-shapecode="shapecode">
 				清洗/修复
 			</view>
-			<view class="btn" @tap="noRepair">
-				复查/返工
-			</view>
-		</view>
-		<view class="btns">
 			<view class="btn" @tap="setScheme">
 				设置方案
 			</view>
+		</view>
+		<view class="btns">
 			<view class="btn" @tap="repairSuc">
 				修复完成
 			</view>
-		</view>
-		<view class="btns">
 			<view class="btn" @tap="myHandler">
 				我的清洗
+			</view>
+		</view>
+		<view class="btns">
+			<view class="btn" @tap="noRepair" style="opacity: 0;">
+				复查/返工
 			</view>
 			<view class="btn" style="opacity: 0;">
 				发现问题
@@ -84,21 +84,21 @@
 			},
 			repair() {
 				if (this.isEmpty()) {
-					request('/api/auth/checkOrder', 'POST', {
-						bar_id: this.shapecode,
-					}).then(res => {
-						this.isRepair = true;
-						if (res.data.status === 201) {
-							uni.showToast({
-								title: '该商品正在修复中...',
-								icon: 'none'
-							});
-						} else {
+					// request('/api/auth/checkOrder', 'POST', {
+					// 	bar_id: this.shapecode,
+					// }).then(res => {
+					// 	this.isRepair = true;
+					// 	if (res.data.status === 201) {
+					// 		uni.showToast({
+					// 			title: '该商品正在修复中...',
+					// 			icon: 'none'
+					// 		});
+					// 	} else {
 							uni.navigateTo({
 								url: '../check/check'
 							});
-						}
-					});
+					// 	}
+					// });
 				}
 			},
 			noRepair() {

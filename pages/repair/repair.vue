@@ -17,13 +17,25 @@
 			</view>
 		</view>
 		<view class='add_img_card card'>
-			<view class='title'>添加瑕疵图片</view>
+			<view class='title'>修复前或不能修复原因</view>
 			<view class='img_list'>
 				<view v-for="(item, index) in imgArr" :key="index" class='img_box is_add_img'>
-					<image :data-index='index' @tap='deteleImg' class='detele' src='../../static/images/close.png'></image>
+					<image :data-index='index' @tap='deteleImg2' class='detele' src='../../static/images/close.png'></image>
 					<image :src='item'></image>
 				</view>
 				<view @tap='add_img' class='add_img_button img_box'>
+					<image src='../../static/images/add.png'></image>
+				</view>
+			</view>
+		</view>
+		<view class='add_img_card card'>
+			<view class='title'>修复后</view>
+			<view class='img_list'>
+				<view v-for="(item, index) in unrepair_image" :key="index" class='img_box is_add_img'>
+					<image :data-index='index' @tap='deteleImg3' class='detele' src='../../static/images/close.png'></image>
+					<image :src='item'></image>
+				</view>
+				<view @tap='add_unrepair_img' class='add_img_button img_box'>
 					<image src='../../static/images/add.png'></image>
 				</view>
 			</view>
@@ -66,7 +78,8 @@
 
 <script>
 	import {
-		mapState
+		mapState,
+		mapMutations
 	} from 'vuex';
 	const recorderManager = uni.getRecorderManager();
 	const innerAudioContext = uni.createInnerAudioContext();
@@ -80,11 +93,14 @@
 			return {
 				id: '',
 				imgArr: [],
+				imgArrRes: [],
 				shoeboxImgArr: [],
 				repairImgArr: [],
 				shoeboxImgResArr: [],
 				repairImgResArr: [],
 				resultImgArr: [],
+				unrepair_image: [],
+				unrepair_imageRes: [],
 				qiniuToken: '',
 				is_value: '',
 				voice: '',
@@ -108,7 +124,8 @@
 						value: 'is_xiu',
 						name: '修复'
 					}
-				]
+				],
+				resData: []
 			}
 		},
 		onLoad() {
@@ -116,11 +133,29 @@
 				console.log(res);
 				this.qiniuToken = res.data;
 			});
+			request('/api/auth/getOrder', 'POST', {
+				bar_id: this.shapecode
+			}).then(res => {
+				console.log(res);
+				if (res.data.length) {
+					this.resData = res.data;
+					this.shoeboxImgArr = res.data[0].shoes_image === null ? [] : JSON.parse(res.data[0].shoes_image);
+					this.shoeboxImgResArr = res.data[0].shoes_image === null ? [] : JSON.parse(res.data[0].shoes_image);
+					this.imgArr = res.data[0].original_image === null ? [] : JSON.parse(res.data[0].original_image);
+					this.imgArrRes = res.data[0].original_image === null ? [] : JSON.parse(res.data[0].original_image);
+					this.unrepair_image = res.data[0].end_image === null ? [] : JSON.parse(res.data[0].end_image);
+					this.unrepair_imageRes = res.data[0].end_image === null ? [] : JSON.parse(res.data[0].end_image);
+					this.sound = res.data[0].sound;
+					this.upShapeCode(res.data[0].bar_id);
+					this.upJSName(res.data[0].username);
+				}
+			});
 		},
 		computed: {
 			...mapState(['jsName', 'shapecode', 'jsId'])
 		},
 		methods: {
+			...mapMutations(['upJSName','upShapeCode']),
 			checkboxChange: function(e) {
 				let items = this.items,
 					values = e.detail.value;
@@ -166,12 +201,42 @@
 					}
 				})
 			},
+			// 添加修复后图片
+			add_unrepair_img() {
+				let that = this;
+				let imgArr = that.unrepair_image;
+				uni.chooseImage({
+					sizeType: ['original', 'compressed'],
+					sourceType: ['album', 'camera'],
+					success(res) {
+						that.unrepair_image = imgArr.concat(res.tempFilePaths);
+					}
+				})
+			},
 			// 删除图片
 			deteleImg(e) {
 				let index = e.currentTarget.dataset.index;
-				let arr = this.imgArr;
-				arr.splice(index, 1)
-				this.imgArr = arr
+				this.shoeboxImgArr.splice(index, 1)
+				if (index <= this.shoeboxImgResArr.length - 1) {
+					this.shoeboxImgResArr.splice(index, 1);
+				}
+			},
+			// 删除图片
+			deteleImg2(e) {
+				let index = e.currentTarget.dataset.index;
+				this.imgArr.splice(index, 1)
+				if (index <= this.imgArrRes.length - 1) {
+					this.imgArrRes.splice(index, 1);
+				}
+			},
+			// 删除图片
+			deteleImg3(e) {
+				let index = e.currentTarget.dataset.index;
+				this.unrepair_image.splice(index, 1)
+				if (index <= this.unrepair_imageRes.length - 1) {
+					this.unrepair_imageRes.splice(index, 1);
+				}
+				console.log(this.unrepair_imageRes);
 			},
 			// 添加备注
 			add_remarks(e) {
@@ -268,13 +333,26 @@
 			upImgs(imgArr, qiuniuToken) {
 				let that = this;
 				let resultImgArr = [];
+				
+				const arr = [];
+				
+				imgArr.forEach(item => {
+					if (!/static\.tosneaker\.com/ig.test(item) || !/uploads/ig.test(item)) {
+						arr.push(item);
+					}
+				});
+				console.log(imgArr);
+				
+				if (arr.length === 0) {
+					return Promise.resolve(imgArr);
+				}
+				
 				return new Promise((resolve, reject) => {
-					imgArr.forEach(item => {
+					arr.forEach(item => {
 						var imgName = item.substr(30, 50);
 						qiniuUploader.upload(item, res => {
 							resultImgArr.push(res.imageURL);
-							that.resultImgArr
-							if (resultImgArr.length == imgArr.length) {
+							if (resultImgArr.length == arr.length) {
 								resolve(resultImgArr)
 							}
 						}, error => {
@@ -347,40 +425,53 @@
 					that.upRecord(that.voice, that.qiniuToken).then(res => {
 						sound = res.imageURL;
 						that.upImgs(that.imgArr, that.qiniuToken).then((original_image) => {
-							console.log(original_image);
-							that.upImgs(this.shoeboxImgArr, that.qiniuToken).then(shoes_image => {
+							original_image = [...new Set(original_image.concat(...this.imgArrRes))];
+							console.log(that.shoeboxImgArr);
+							that.upImgs(that.shoeboxImgArr, that.qiniuToken).then(shoes_image => {
 								console.log(shoes_image);
-								request("/api/auth/order", "POST", {
-									consignor_id: that.jsId,
-									bar_id: that.shapecode,
-									original_image,
-									shoes_image,
-									remarks: that.remarks,
-									sound,
-									sound_length: this.time,
-									is_xi: type_s['is_xi'],
-									is_xiu: type_s['is_xiu']
-								}).then(res => {
+								shoes_image = [...new Set(shoes_image.concat(...this.shoeboxImgResArr))];
+								that.upImgs(this.unrepair_image, that.qiniuToken).then(end_image => {
+									console.log(end_image);
+									end_image = [...new Set(end_image.concat(...this.unrepair_imageRes))];
+									request("/api/auth/order", "POST", {
+										consignor_id: that.jsId,
+										bar_id: that.shapecode,
+										original_image,
+										shoes_image,
+										remarks: that.remarks,
+										end_image,
+										sound,
+										sound_length: this.time,
+										is_xi: type_s['is_xi'],
+										is_xiu: type_s['is_xiu']
+									}).then(res => {
+										uni.hideLoading();
+										uni.showToast({
+											title: res.data.message,
+											icon: "none",
+											duration: 1000,
+											complete() {
+												if (res.data.status == 200) {
+													uni.showToast({
+														title: '添加完成',
+														icon: 'none'
+													});
+													setTimeout(() => {
+														uni.navigateTo({
+															url: "../sweep/sweep"
+														});
+													}, 1000);
+												}
+											}
+										})
+									});
+								}).catch(error => {
 									uni.hideLoading();
 									uni.showToast({
-										title: res.data.message,
-										icon: "none",
-										duration: 1000,
-										complete() {
-											if (res.data.status == 200) {
-												uni.showToast({
-													title: '添加完成',
-													icon: 'none'
-												});
-												setTimeout(() => {
-													uni.navigateTo({
-														url: "../sweep/sweep"
-													});
-												}, 1000);
-											}
-										}
+										title: '图片上传失败',
+										icon: "none"
 									})
-								});
+								});	
 							}).catch(error => {
 								uni.hideLoading();
 								uni.showToast({
@@ -404,35 +495,50 @@
 					})
 				} else {
 					that.upImgs(that.imgArr, that.qiniuToken).then((original_image) => {
-						console.log(original_image);
+						original_image = [...new Set(original_image.concat(...this.imgArrRes))];
 						that.upImgs(this.shoeboxImgArr, that.qiniuToken).then(shoes_image => {
-							console.log(shoes_image);
-							request("/api/auth/order", "POST", {
-								consignor_id: that.jsId,
-								bar_id: that.shapecode,
-								original_image,
-								shoes_image,
-								remarks: that.remarks,
-								sound,
-								is_xi: type_s['is_xi'],
-								is_xiu: type_s['is_xiu']
-							}).then(res => {
+							shoes_image = [...new Set(shoes_image.concat(...this.shoeboxImgResArr))];
+							that.upImgs(this.unrepair_image, that.qiniuToken).then(end_image => {
+								end_image = [...new Set(end_image.concat(...this.unrepair_imageRes))];
+								let url = "/api/auth/order";
+								if (this.resData.length) {
+									url = '/api/auth/updateOrder';
+								}
+								console.log(shoes_image);
+								request(url, "POST", {
+									consignor_id: that.jsId,
+									bar_id: that.shapecode,
+									original_image,
+									shoes_image,
+									remarks: that.remarks,
+									end_image,
+									sound,
+									is_xi: type_s['is_xi'],
+									is_xiu: type_s['is_xiu']
+								}).then(res => {
+									uni.hideLoading();
+									uni.showToast({
+										title: res.data.message,
+										icon: "none",
+										duration: 1000,
+										complete() {
+											uni.showToast({
+												title: '添加完成',
+												icon: 'none'
+											});
+											setTimeout(() => {
+												uni.navigateTo({
+													url: "../sweep/sweep"
+												});
+											}, 1000);
+										}
+									})
+								});
+							}).catch(error => {
 								uni.hideLoading();
 								uni.showToast({
-									title: res.data.message,
-									icon: "none",
-									duration: 1000,
-									complete() {
-										uni.showToast({
-											title: '添加完成',
-											icon: 'none'
-										});
-										setTimeout(() => {
-											uni.navigateTo({
-												url: "../sweep/sweep"
-											});
-										}, 1000);
-									}
+									title: '图片上传失败',
+									icon: "none"
 								})
 							});
 						}).catch(error => {

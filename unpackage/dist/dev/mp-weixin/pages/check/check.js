@@ -174,7 +174,7 @@ var _vuex = __webpack_require__(/*! vuex */ 14);function _interopRequireDefault(
       icon: 'none' });
 
     (0, _request.default)('/api/auth/consign', 'POST', {
-      id: 24 || false }).
+      id: this.id }).
     then(function (res) {
       uni.hideLoading();
       var data = _toConsumableArray(res.data);

@@ -50,7 +50,7 @@
 				icon: 'none'
 			});
 			request('/api/auth/consign', 'POST', {
-				id: 24 || this.id
+				id: this.id
 			}).then(res => {
 				uni.hideLoading();
 				let data = [...res.data];
