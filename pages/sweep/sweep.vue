@@ -24,7 +24,7 @@
 				我的清洗
 			</view>
 		</view>
-		<view class="btns">
+		<view class="btns" style="display: none;">
 			<view class="btn" @tap="noRepair" style="opacity: 0;">
 				复查/返工
 			</view>
@@ -50,13 +50,12 @@
 			
 		},
 		methods: {
-			...mapMutations(['upShapeCode']),
+			...mapMutations(['upShapeCode','upJSId', 'upJSName']),
 			sweepHandler: function() {
 				const self = this;
 				uni.scanCode({
 					success(res) {
 						self.shapecode = res.rawData;
-						console.log(res);
 					},
 					fail(err) {
 						wx.showToast({
@@ -70,7 +69,6 @@
 			shapecodeFn(e) {
 				this.shapecode = e.detail.value;
 				this.upShapeCode(this.shapecode);
-				console.log(e);
 			},
 			isEmpty() {
 				if (this.shapecode === '') {
@@ -84,21 +82,26 @@
 			},
 			repair() {
 				if (this.isEmpty()) {
-					// request('/api/auth/checkOrder', 'POST', {
-					// 	bar_id: this.shapecode,
-					// }).then(res => {
-					// 	this.isRepair = true;
-					// 	if (res.data.status === 201) {
-					// 		uni.showToast({
-					// 			title: '该商品正在修复中...',
-					// 			icon: 'none'
-					// 		});
-					// 	} else {
+					request('/api/auth/checkOrder', 'POST', {
+						bar_id: this.shapecode,
+					}).then(res => {
+						this.isRepair = true;
+						if (res.data.status === 201) {
+							request('/api/auth/getOrder', 'POST', {
+								bar_id: this.shapecode
+							}).then(res => {
+								this.upJSId(res.data[0].consignor_id);
+								this.upJSName(res.data[0].username);
+								uni.navigateTo({
+									url: '../repair/repair'
+								});
+							});
+						} else {
 							uni.navigateTo({
 								url: '../check/check'
 							});
-					// 	}
-					// });
+						}
+					});
 				}
 			},
 			noRepair() {

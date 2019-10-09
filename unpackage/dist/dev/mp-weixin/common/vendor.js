@@ -1498,9 +1498,9 @@ uni$1;exports.default = _default;
 /***/ }),
 
 /***/ 12:
-/*!***************************************************!*\
-  !*** C:/Users/11851/Desktop/瑕疵仓/utils/request.js ***!
-  \***************************************************/
+/*!******************************************************!*\
+  !*** C:/Users/11851/Desktop/xiaci2/utils/request.js ***!
+  \******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1587,18 +1587,18 @@ request;exports.default = _default;
 /***/ }),
 
 /***/ 13:
-/*!***************************************************!*\
-  !*** C:/Users/11851/Desktop/瑕疵仓/common/global.js ***!
-  \***************************************************/
+/*!******************************************************!*\
+  !*** C:/Users/11851/Desktop/xiaci2/common/global.js ***!
+  \******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = {
-  // api: "https://wash.tosneaker.com", // 正式
-  api: "https://test.tosneaker.com", // 测试
-  qiniuImgUrl: "https://static.tosneaker.com" //　测试
-  // qiniuImgUrl: 'http://static-stg.tosneaker.com'　//　正式
+  api: "https://wash.tosneaker.com", // 正式
+  // api: "https://test.tosneaker.com", // 测试
+  // qiniuImgUrl: "https://static.tosneaker.com",//　测试
+  qiniuImgUrl: 'http://static-stg.tosneaker.com' //　正式
 };exports.default = _default;
 
 /***/ }),
@@ -2662,9 +2662,9 @@ function normalizeComponent (
 /***/ }),
 
 /***/ 18:
-/*!*************************************************!*\
-  !*** C:/Users/11851/Desktop/瑕疵仓/store/index.js ***!
-  \*************************************************/
+/*!****************************************************!*\
+  !*** C:/Users/11851/Desktop/xiaci2/store/index.js ***!
+  \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8724,9 +8724,9 @@ module.exports = g;
 /***/ }),
 
 /***/ 4:
-/*!*********************************************!*\
-  !*** C:/Users/11851/Desktop/瑕疵仓/pages.json ***!
-  \*********************************************/
+/*!************************************************!*\
+  !*** C:/Users/11851/Desktop/xiaci2/pages.json ***!
+  \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8736,9 +8736,9 @@ module.exports = g;
 /***/ }),
 
 /***/ 41:
-/*!*********************************************************!*\
-  !*** C:/Users/11851/Desktop/瑕疵仓/utils/qiniuUploader.js ***!
-  \*********************************************************/
+/*!************************************************************!*\
+  !*** C:/Users/11851/Desktop/xiaci2/utils/qiniuUploader.js ***!
+  \************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9812,9 +9812,9 @@ main();
 /***/ }),
 
 /***/ 58:
-/*!******************************************************!*\
-  !*** C:/Users/11851/Desktop/瑕疵仓/utils/pinyinUtil.js ***!
-  \******************************************************/
+/*!*********************************************************!*\
+  !*** C:/Users/11851/Desktop/xiaci2/utils/pinyinUtil.js ***!
+  \*********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10049,9 +10049,9 @@ module.exports = {
 /***/ }),
 
 /***/ 59:
-/*!*******************************************************************!*\
-  !*** C:/Users/11851/Desktop/瑕疵仓/utils/pinyin_dict_firstletter.js ***!
-  \*******************************************************************/
+/*!**********************************************************************!*\
+  !*** C:/Users/11851/Desktop/xiaci2/utils/pinyin_dict_firstletter.js ***!
+  \**********************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10082,9 +10082,9 @@ module.exports = {"_from":"@dcloudio/uni-stat@next","_id":"@dcloudio/uni-stat@2.
 /***/ }),
 
 /***/ 7:
-/*!**************************************************************!*\
-  !*** C:/Users/11851/Desktop/瑕疵仓/pages.json?{"type":"style"} ***!
-  \**************************************************************/
+/*!*****************************************************************!*\
+  !*** C:/Users/11851/Desktop/xiaci2/pages.json?{"type":"style"} ***!
+  \*****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10094,9 +10094,9 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 /***/ }),
 
 /***/ 8:
-/*!*************************************************************!*\
-  !*** C:/Users/11851/Desktop/瑕疵仓/pages.json?{"type":"stat"} ***!
-  \*************************************************************/
+/*!****************************************************************!*\
+  !*** C:/Users/11851/Desktop/xiaci2/pages.json?{"type":"stat"} ***!
+  \****************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

@@ -53,7 +53,6 @@
 						password: this.pass
 					},
 					success(res) {
-						console.log(res);
 						if (res.statusCode == 200) {
 							let user = res.data.user;
 							let time = Date.parse(new Date()) / 1000;

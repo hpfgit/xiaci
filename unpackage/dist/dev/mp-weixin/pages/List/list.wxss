@@ -179,8 +179,7 @@ page {
 }
 
 /* 处理后图片 */
-.handle_after {
-}
+.handle_after {}
 .handle_after_title {
 	height: 65rpx;
 	line-height: 65rpx;
@@ -208,7 +207,7 @@ page {
 	font-family: PingFangSC-Regular;
 	font-size: 26rpx;
 }
-.await_return_select > .active {
+.await_return_select>.active {
 	color: #3748f9;
 }
 
@@ -324,14 +323,14 @@ page {
 	    -ms-flex-pack: distribute;
 	        justify-content: space-around;
 }
-.setting_card .price_list > view {
+.setting_card .price_list>view {
 	width: 126rpx;
 	height: 80rpx;
 	background-color: #eaedf6;
 	border-radius: 6rpx;
 	line-height: 80rpx;
 }
-.setting_card .price_list > view.active {
+.setting_card .price_list>view.active {
 	background-color: #3748f9;
 	color: #fff;
 }
@@ -352,5 +351,21 @@ page {
 	height: 144rpx;
 	line-height: 144rpx;
 	text-align: center;
+}
+.hanle_title_buttom {
+	text-align: right;
+}
+.edit-order,.detele-order {
+	color: #FFFFFF;
+	border-radius: 6rpx;
+	padding: 0 15rpx;
+	margin-left: 24rpx;
+	display: inline-block;
+}
+.edit-order {
+	background-color: #3151ff;
+}
+.detele-order {
+	background-color: #f56c6c;
 }
 
