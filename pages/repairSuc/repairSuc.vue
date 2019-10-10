@@ -9,11 +9,21 @@
 			<view class='img_list'>
 				<view v-for="(item, index) in shoeboxImgArr" :key="index" class='img_box is_add_img'>
 					<image :data-index='index' @tap='deteleImg' class='detele' src='../../static/images/close.png'></image>
-					<image :src='item'></image>
+					<image :src='Exhibition(item)'></image>
 				</view>
 				<view @tap='add_shoeboxImg' class='add_img_button img_box'>
 					<image src='../../static/images/add.png'></image>
 				</view>
+			</view>
+		</view>
+		<view class="add_remarks card">
+			<view class="title">选择清洗/修复</view>
+			<view class="check-box">
+				<checkbox-group @change="checkboxChange">
+					<label v-for="(item, index) in items" :key="index">
+						<checkbox :value="item.value" :checked="item.checked" />{{item.name}}
+					</label>
+				</checkbox-group>
 			</view>
 		</view>
 		<!-- <view class='add_img_card card'>
@@ -63,6 +73,7 @@
 	let time1 = '';
 	import qiniuUploader from '../../utils/qiniuUploader.js'; //七牛sdk
 	import request from '../../utils/request.js';
+	import globalData from '../../common/global.js';
 	const app = getApp();
 
 	export default {
@@ -84,7 +95,19 @@
 				remarks: '',
 				checked: [],
 				totalPrice: 0,
-				scheme: []
+				scheme: [],
+				items: [
+					{
+						value: 'is_xi',
+						name: '清洗',
+						checked: false
+					},
+					{
+						value: 'is_xiu',
+						name: '修复',
+						checked: false
+					}
+				]
 			}
 		},
 		onLoad() {
@@ -100,6 +123,15 @@
 					this.sound = res.data[0].sound;
 					this.upShapeCode(res.data[0].bar_id);
 					this.upJSName(res.data[0].username);
+					this.items.forEach(item => {
+						if (item.value === 'is_xi' && res.data[0].is_xi === 1) {
+							item.checked = true;
+						} else if (item.value === 'is_xiu' && res.data[0].is_xiu === 1) {
+							item.checked = true;
+						} else {
+							item.checked = false;
+						}
+					});
 					console.log(res);
 				}
 			})
@@ -109,11 +141,30 @@
 		},
 		methods: {
 			...mapMutations(['upShapeCode', 'upJSName']),
+			checkboxChange: function(e) {
+				let items = this.items,
+					values = e.detail.value;
+				for (let i = 0, lenI = items.length; i < lenI; ++i) {
+					const item = items[i];
+					if (values.includes(item.value)) {
+						this.$set(item, 'checked', true);
+					} else {
+						this.$set(item, 'checked', false);
+					}
+				}
+				console.log(this.items);
+			},
 			isPlayImg(isplay) {
 				const ext = isplay ? "gif" : "png";
 				let path = "../../static/images/play_bg.";
 				const fullPath = path + ext;
 				return fullPath;
+			},
+			Exhibition(path) {
+				if (!/static\.tosneaker\.com/ig.test(path) && !/tmp/ig.test(path)) {
+					return globalData.qiniuImgUrl + path;
+				}
+				return path;
 			},
 			// 添加鞋盒正面照图片
 			add_shoeboxImg() {
@@ -244,7 +295,7 @@
 				const arr = [];
 
 				imgArr.forEach(item => {
-					if (!/static\.tosneaker\.com/ig.test(item)) {
+					if (!/static\.tosneaker\.com/ig.test(item)  && !/uploads/ig.test(item)) {
 						arr.push(item);
 					}
 				});
@@ -322,6 +373,14 @@
 				}
 				let that = this;
 				let sound = '';
+				let type_s = {};
+				for (let i = 0; i < this.items.length; i++) {
+					if (this.items[i].checked) {
+						type_s[[this.items[i].value]] = 1;
+					} else {
+						type_s[[this.items[i].value]] = 0;
+					}
+				}
 				if (that.voice !== "") {
 					that.upRecord(that.voice, that.qiniuToken).then(res => {
 						sound = res.imageURL;
@@ -330,11 +389,13 @@
 							end_image = [...new Set(end_image.concat(...this.shoeboxImgResArr))];
 							console.log(end_image);
 							request("/api/auth/setDone", "POST", {
-								wash_id: that.jsId,
+								wash_id: JSON.parse(uni.getStorageSync('user'))['id'] || that.jsId,
 								bar_id: this.shapecode,
 								end_image,
 								remarks: that.remarks,
-								sound
+								sound,
+								is_xi: type_s['is_xi'],
+								is_xiu: type_s['is_xiu']
 							}).then(res => {
 								uni.hideLoading();
 								uni.showToast({
@@ -344,7 +405,7 @@
 									complete() {
 										if (res.data.code == 200) {
 											setTimeout(() => {
-												uni.navigateTo({
+												uni.redirectTo({
 													url: "../sweep/sweep"
 												});
 											}, 1000);
@@ -371,11 +432,13 @@
 						end_image = [...new Set(end_image.concat(...this.shoeboxImgResArr))];
 						console.log(end_image);
 						request("/api/auth/setDone", "POST", {
-							wash_id: that.jsId,
+							wash_id: JSON.parse(uni.getStorageSync('user'))['id'] || that.jsId,
 							bar_id: that.shapecode,
 							end_image,
 							remarks: that.remarks,
-							sound
+							sound,
+							is_xi: type_s['is_xi'],
+							is_xiu: type_s['is_xiu']
 						}).then(res => {
 							uni.hideLoading();
 							uni.showToast({
@@ -384,7 +447,7 @@
 								duration: 1000,
 								complete() {
 									setTimeout(() => {
-										uni.navigateTo({
+										uni.redirectTo({
 											url: "../sweep/sweep"
 										});
 									}, 1000);
@@ -784,5 +847,9 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+	}
+	
+	.check-box label {
+		margin-right: 40rpx;
 	}
 </style>

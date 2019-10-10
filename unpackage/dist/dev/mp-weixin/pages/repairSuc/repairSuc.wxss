@@ -452,4 +452,7 @@ page {
 	    -ms-flex-align: center;
 	        align-items: center;
 }
+.check-box label {
+	margin-right: 40rpx;
+}
 

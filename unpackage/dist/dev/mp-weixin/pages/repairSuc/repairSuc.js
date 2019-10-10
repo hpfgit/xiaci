@@ -117,6 +117,22 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+  var l0 = _vm.__map(_vm.shoeboxImgArr, function(item, index) {
+    var m0 = _vm.Exhibition(item)
+    return {
+      $orig: _vm.__get_orig(item),
+      m0: m0
+    }
+  })
+
+  _vm.$mp.data = Object.assign(
+    {},
+    {
+      $root: {
+        l0: l0
+      }
+    }
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -205,6 +221,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
 var _vuex = __webpack_require__(/*! vuex */ 14);
 
 
@@ -213,7 +239,8 @@ var _vuex = __webpack_require__(/*! vuex */ 14);
 
 
 var _qiniuUploader = _interopRequireDefault(__webpack_require__(/*! ../../utils/qiniuUploader.js */ 41));
-var _request = _interopRequireDefault(__webpack_require__(/*! ../../utils/request.js */ 12));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance");}function _iterableToArray(iter) {if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) {for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {arr2[i] = arr[i];}return arr2;}}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var recorderManager = uni.getRecorderManager();var innerAudioContext = uni.createInnerAudioContext();var time1 = '';
+var _request = _interopRequireDefault(__webpack_require__(/*! ../../utils/request.js */ 12));
+var _global = _interopRequireDefault(__webpack_require__(/*! ../../common/global.js */ 13));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance");}function _iterableToArray(iter) {if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) {for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {arr2[i] = arr[i];}return arr2;}}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var recorderManager = uni.getRecorderManager();var innerAudioContext = uni.createInnerAudioContext();var time1 = '';
 var app = getApp();var _default =
 
 {
@@ -235,7 +262,19 @@ var app = getApp();var _default =
       remarks: '',
       checked: [],
       totalPrice: 0,
-      scheme: [] };
+      scheme: [],
+      items: [
+      {
+        value: 'is_xi',
+        name: '清洗',
+        checked: false },
+
+      {
+        value: 'is_xiu',
+        name: '修复',
+        checked: false }] };
+
+
 
   },
   onLoad: function onLoad() {var _this = this;
@@ -251,6 +290,15 @@ var app = getApp();var _default =
         _this.sound = res.data[0].sound;
         _this.upShapeCode(res.data[0].bar_id);
         _this.upJSName(res.data[0].username);
+        _this.items.forEach(function (item) {
+          if (item.value === 'is_xi' && res.data[0].is_xi === 1) {
+            item.checked = true;
+          } else if (item.value === 'is_xiu' && res.data[0].is_xiu === 1) {
+            item.checked = true;
+          } else {
+            item.checked = false;
+          }
+        });
         console.log(res);
       }
     });
@@ -260,11 +308,30 @@ var app = getApp();var _default =
 
   methods: _objectSpread({},
   (0, _vuex.mapMutations)(['upShapeCode', 'upJSName']), {
+    checkboxChange: function checkboxChange(e) {
+      var items = this.items,
+      values = e.detail.value;
+      for (var i = 0, lenI = items.length; i < lenI; ++i) {
+        var item = items[i];
+        if (values.includes(item.value)) {
+          this.$set(item, 'checked', true);
+        } else {
+          this.$set(item, 'checked', false);
+        }
+      }
+      console.log(this.items);
+    },
     isPlayImg: function isPlayImg(isplay) {
       var ext = isplay ? "gif" : "png";
       var path = "../../static/images/play_bg.";
       var fullPath = path + ext;
       return fullPath;
+    },
+    Exhibition: function Exhibition(path) {
+      if (!/static\.tosneaker\.com/ig.test(path) && !/tmp/ig.test(path)) {
+        return _global.default.qiniuImgUrl + path;
+      }
+      return path;
     },
     // 添加鞋盒正面照图片
     add_shoeboxImg: function add_shoeboxImg() {
@@ -395,7 +462,7 @@ var app = getApp();var _default =
       var arr = [];
 
       imgArr.forEach(function (item) {
-        if (!/static\.tosneaker\.com/ig.test(item)) {
+        if (!/static\.tosneaker\.com/ig.test(item) && !/uploads/ig.test(item)) {
           arr.push(item);
         }
       });
@@ -473,6 +540,14 @@ var app = getApp();var _default =
       }
       var that = this;
       var sound = '';
+      var type_s = {};
+      for (var i = 0; i < this.items.length; i++) {
+        if (this.items[i].checked) {
+          type_s[[this.items[i].value]] = 1;
+        } else {
+          type_s[[this.items[i].value]] = 0;
+        }
+      }
       if (that.voice !== "") {
         that.upRecord(that.voice, that.qiniuToken).then(function (res) {
           sound = res.imageURL;
@@ -481,11 +556,13 @@ var app = getApp();var _default =
             end_image = _toConsumableArray(new Set((_end_image = end_image).concat.apply(_end_image, _toConsumableArray(_this4.shoeboxImgResArr))));
             console.log(end_image);
             (0, _request.default)("/api/auth/setDone", "POST", {
-              wash_id: that.jsId,
+              wash_id: JSON.parse(uni.getStorageSync('user'))['id'] || that.jsId,
               bar_id: _this4.shapecode,
               end_image: end_image,
               remarks: that.remarks,
-              sound: sound }).
+              sound: sound,
+              is_xi: type_s['is_xi'],
+              is_xiu: type_s['is_xiu'] }).
             then(function (res) {
               uni.hideLoading();
               uni.showToast({
@@ -495,7 +572,7 @@ var app = getApp();var _default =
                 complete: function complete() {
                   if (res.data.code == 200) {
                     setTimeout(function () {
-                      uni.navigateTo({
+                      uni.redirectTo({
                         url: "../sweep/sweep" });
 
                     }, 1000);
@@ -522,11 +599,13 @@ var app = getApp();var _default =
           end_image = _toConsumableArray(new Set((_end_image2 = end_image).concat.apply(_end_image2, _toConsumableArray(_this4.shoeboxImgResArr))));
           console.log(end_image);
           (0, _request.default)("/api/auth/setDone", "POST", {
-            wash_id: that.jsId,
+            wash_id: JSON.parse(uni.getStorageSync('user'))['id'] || that.jsId,
             bar_id: that.shapecode,
             end_image: end_image,
             remarks: that.remarks,
-            sound: sound }).
+            sound: sound,
+            is_xi: type_s['is_xi'],
+            is_xiu: type_s['is_xiu'] }).
           then(function (res) {
             uni.hideLoading();
             uni.showToast({
@@ -535,7 +614,7 @@ var app = getApp();var _default =
               duration: 1000,
               complete: function complete() {
                 setTimeout(function () {
-                  uni.navigateTo({
+                  uni.redirectTo({
                     url: "../sweep/sweep" });
 
                 }, 1000);

@@ -1595,10 +1595,10 @@ request;exports.default = _default;
 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = {
-  api: "https://wash.tosneaker.com", // 正式
-  // api: "https://test.tosneaker.com", // 测试
-  // qiniuImgUrl: "https://static.tosneaker.com",//　测试
-  qiniuImgUrl: 'http://static-stg.tosneaker.com' //　正式
+  // api: "https://wash.tosneaker.com", // 正式
+  api: "https://test.tosneaker.com", // 测试
+  qiniuImgUrl: "https://static.tosneaker.com" //　测试
+  // qiniuImgUrl: 'http://static-stg.tosneaker.com'　//　正式
 };exports.default = _default;
 
 /***/ }),

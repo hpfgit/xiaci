@@ -55,7 +55,9 @@
 				const self = this;
 				uni.scanCode({
 					success(res) {
-						self.shapecode = res.rawData;
+						self.shapecode = res.result;
+						self.upShapeCode(self.shapecode);
+						console.log(res);
 					},
 					fail(err) {
 						wx.showToast({

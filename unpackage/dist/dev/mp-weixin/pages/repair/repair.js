@@ -90,12 +90,39 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  var m0 = _vm.isPlayImg(_vm.isplay)
+  var l0 = _vm.__map(_vm.shoeboxImgArr, function(item, index) {
+    var m0 = _vm.Exhibition(item)
+    return {
+      $orig: _vm.__get_orig(item),
+      m0: m0
+    }
+  })
+
+  var l1 = _vm.__map(_vm.imgArr, function(item, index) {
+    var m1 = _vm.Exhibition(item)
+    return {
+      $orig: _vm.__get_orig(item),
+      m1: m1
+    }
+  })
+
+  var l2 = _vm.__map(_vm.unrepair_image, function(item, index) {
+    var m2 = _vm.Exhibition(item)
+    return {
+      $orig: _vm.__get_orig(item),
+      m2: m2
+    }
+  })
+
+  var m3 = _vm.isPlayImg(_vm.isplay)
   _vm.$mp.data = Object.assign(
     {},
     {
       $root: {
-        m0: m0
+        l0: l0,
+        l1: l1,
+        l2: l2,
+        m3: m3
       }
     }
   )
@@ -200,16 +227,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-
-
-
-
-
-
 var _vuex = __webpack_require__(/*! vuex */ 14);
 
 
@@ -218,7 +235,8 @@ var _vuex = __webpack_require__(/*! vuex */ 14);
 
 
 var _qiniuUploader = _interopRequireDefault(__webpack_require__(/*! ../../utils/qiniuUploader.js */ 41));
-var _request = _interopRequireDefault(__webpack_require__(/*! ../../utils/request.js */ 12));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance");}function _iterableToArray(iter) {if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) {for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {arr2[i] = arr[i];}return arr2;}}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var recorderManager = uni.getRecorderManager();var innerAudioContext = uni.createInnerAudioContext();var time1 = '';
+var _request = _interopRequireDefault(__webpack_require__(/*! ../../utils/request.js */ 12));
+var _global = _interopRequireDefault(__webpack_require__(/*! ../../common/global.js */ 13));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _toConsumableArray(arr) {return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();}function _nonIterableSpread() {throw new TypeError("Invalid attempt to spread non-iterable instance");}function _iterableToArray(iter) {if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);}function _arrayWithoutHoles(arr) {if (Array.isArray(arr)) {for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {arr2[i] = arr[i];}return arr2;}}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var recorderManager = uni.getRecorderManager();var innerAudioContext = uni.createInnerAudioContext();var time1 = '';
 var app = getApp();var _default =
 
 {
@@ -251,17 +269,19 @@ var app = getApp();var _default =
       {
         value: 'is_xi',
         name: '清洗',
-        checked: true },
+        checked: false },
 
       {
         value: 'is_xiu',
-        name: '修复' }],
+        name: '修复',
+        checked: false }],
 
 
       resData: [] };
 
   },
   onLoad: function onLoad() {var _this = this;
+    console.log(this.shapecode);
     (0, _request.default)('/api/auth/getQiniuToken', 'POST', {}).then(function (res) {
       console.log(res);
       _this.qiniuToken = res.data;
@@ -300,6 +320,12 @@ var app = getApp();var _default =
           this.$set(item, 'checked', false);
         }
       }
+    },
+    Exhibition: function Exhibition(path) {
+      if (!/static\.tosneaker\.com/ig.test(path) && !/tmp/ig.test(path)) {
+        return _global.default.qiniuImgUrl + path;
+      }
+      return path;
     },
     // 是否播放
     isPlayImg: function isPlayImg(isplay) {
@@ -470,11 +496,11 @@ var app = getApp();var _default =
       var arr = [];
 
       imgArr.forEach(function (item) {
-        if (!/static\.tosneaker\.com/ig.test(item) || !/uploads/ig.test(item)) {
+        if (!/static\.tosneaker\.com/ig.test(item) && !/uploads/ig.test(item)) {
           arr.push(item);
         }
       });
-      console.log(imgArr);
+      console.log(imgArr, arr);
 
       if (arr.length === 0) {
         return Promise.resolve(imgArr);
@@ -590,7 +616,7 @@ var app = getApp();var _default =
                           icon: 'none' });
 
                         setTimeout(function () {
-                          uni.navigateTo({
+                          uni.redirectTo({
                             url: "../sweep/sweep" });
 
                         }, 1000);
@@ -645,9 +671,7 @@ var app = getApp();var _default =
                 shoes_image: shoes_image,
                 remarks: that.remarks,
                 end_image: end_image,
-                sound: sound,
-                is_xi: type_s['is_xi'],
-                is_xiu: type_s['is_xiu'] }).
+                sound: sound }).
               then(function (res) {
                 uni.hideLoading();
                 uni.showToast({
@@ -660,7 +684,7 @@ var app = getApp();var _default =
                       icon: 'none' });
 
                     setTimeout(function () {
-                      uni.navigateTo({
+                      uni.redirectTo({
                         url: "../sweep/sweep" });
 
                     }, 1000);
@@ -682,6 +706,7 @@ var app = getApp();var _default =
 
           });
         }).catch(function (error) {
+          console.log(error);
           uni.hideLoading();
           uni.showToast({
             title: '图片上传失败',
@@ -737,8 +762,6 @@ var app = getApp();var _default =
                 unrepair_image: unrepair_image,
                 sound: sound,
                 sound_length: _this5.time,
-                is_xi: type_s['is_xi'],
-                is_xiu: type_s['is_xiu'],
                 states: 5 }).
               then(function (res) {
                 uni.hideLoading();
@@ -796,8 +819,6 @@ var app = getApp();var _default =
               shoes_image: shoes_image,
               remarks: that.remarks,
               sound: sound,
-              is_xi: type_s['is_xi'],
-              is_xiu: type_s['is_xiu'],
               states: 5 }).
             then(function (res) {
               uni.hideLoading();

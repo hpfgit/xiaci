@@ -9,7 +9,7 @@
 			<view class='img_list'>
 				<view v-for="(item, index) in shoeboxImgArr" :key="index" class='img_box is_add_img'>
 					<image :data-index='index' @tap='deteleImg' class='detele' src='../../static/images/close.png'></image>
-					<image :src='item'></image>
+					<image :src='Exhibition(item)'></image>
 				</view>
 				<view @tap='add_shoeboxImg' class='add_img_button img_box'>
 					<image src='../../static/images/add.png'></image>
@@ -21,7 +21,7 @@
 			<view class='img_list'>
 				<view v-for="(item, index) in imgArr" :key="index" class='img_box is_add_img'>
 					<image :data-index='index' @tap='deteleImg2' class='detele' src='../../static/images/close.png'></image>
-					<image :src='item'></image>
+					<image :src='Exhibition(item)'></image>
 				</view>
 				<view @tap='add_img' class='add_img_button img_box'>
 					<image src='../../static/images/add.png'></image>
@@ -33,21 +33,11 @@
 			<view class='img_list'>
 				<view v-for="(item, index) in unrepair_image" :key="index" class='img_box is_add_img'>
 					<image :data-index='index' @tap='deteleImg3' class='detele' src='../../static/images/close.png'></image>
-					<image :src='item'></image>
+					<image :src='Exhibition(item)'></image>
 				</view>
 				<view @tap='add_unrepair_img' class='add_img_button img_box'>
 					<image src='../../static/images/add.png'></image>
 				</view>
-			</view>
-		</view>
-		<view class="add_remarks card">
-			<view class="title">选择清洗/修复</view>
-			<view class="check-box">
-				<checkbox-group @change="checkboxChange">
-					<label v-for="(item, index) in items" :key="index">
-						<checkbox :value="item.value" :checked="item.checked" />{{item.name}}
-					</label>
-				</checkbox-group>
 			</view>
 		</view>
 		<view class="add_remarks card">
@@ -86,6 +76,7 @@
 	let time1 = '';
 	import qiniuUploader from '../../utils/qiniuUploader.js'; //七牛sdk
 	import request from '../../utils/request.js';
+	import globalData from '../../common/global.js';
 	const app = getApp();
 
 	export default {
@@ -118,17 +109,19 @@
 					{
 						value: 'is_xi',
 						name: '清洗',
-						checked: true
+						checked: false
 					},
 					{
 						value: 'is_xiu',
-						name: '修复'
+						name: '修复',
+						checked: false
 					}
 				],
 				resData: []
 			}
 		},
 		onLoad() {
+			console.log(this.shapecode);
 			request('/api/auth/getQiniuToken', 'POST', {}).then(res => {
 				console.log(res);
 				this.qiniuToken = res.data;
@@ -167,6 +160,12 @@
 						this.$set(item, 'checked', false);
 					}
 				}
+			},
+			Exhibition(path) {
+				if (!/static\.tosneaker\.com/ig.test(path) && !/tmp/ig.test(path)) {
+					return globalData.qiniuImgUrl + path;
+				}
+				return path;
 			},
 			// 是否播放
 			isPlayImg(isplay) {
@@ -337,11 +336,11 @@
 				const arr = [];
 				
 				imgArr.forEach(item => {
-					if (!/static\.tosneaker\.com/ig.test(item) || !/uploads/ig.test(item)) {
+					if (!/static\.tosneaker\.com/ig.test(item) && !/uploads/ig.test(item)) {
 						arr.push(item);
 					}
 				});
-				console.log(imgArr);
+				console.log(imgArr, arr);
 				
 				if (arr.length === 0) {
 					return Promise.resolve(imgArr);
@@ -457,7 +456,7 @@
 														icon: 'none'
 													});
 													setTimeout(() => {
-														uni.navigateTo({
+														uni.redirectTo({
 															url: "../sweep/sweep"
 														});
 													}, 1000);
@@ -512,9 +511,7 @@
 									shoes_image,
 									remarks: that.remarks,
 									end_image,
-									sound,
-									is_xi: type_s['is_xi'],
-									is_xiu: type_s['is_xiu']
+									sound
 								}).then(res => {
 									uni.hideLoading();
 									uni.showToast({
@@ -527,7 +524,7 @@
 												icon: 'none'
 											});
 											setTimeout(() => {
-												uni.navigateTo({
+												uni.redirectTo({
 													url: "../sweep/sweep"
 												});
 											}, 1000);
@@ -549,6 +546,7 @@
 							})
 						});
 					}).catch(error => {
+						console.log(error);
 						uni.hideLoading();
 						uni.showToast({
 							title: '图片上传失败',
@@ -604,8 +602,6 @@
 									unrepair_image,
 									sound,
 									sound_length: this.time,
-									is_xi: type_s['is_xi'],
-									is_xiu: type_s['is_xiu'],
 									states: 5
 								}).then(res => {
 									uni.hideLoading();
@@ -663,8 +659,6 @@
 								shoes_image,
 								remarks: that.remarks,
 								sound,
-								is_xi: type_s['is_xi'],
-								is_xiu: type_s['is_xiu'],
 								states: 5
 							}).then(res => {
 								uni.hideLoading();

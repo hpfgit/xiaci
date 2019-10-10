@@ -179,7 +179,9 @@ var _request = _interopRequireDefault(__webpack_require__(/*! ../../utils/reques
       var self = this;
       uni.scanCode({
         success: function success(res) {
-          self.shapecode = res.rawData;
+          self.shapecode = res.result;
+          self.upShapeCode(self.shapecode);
+          console.log(res);
         },
         fail: function fail(err) {
           wx.showToast({
